@@ -1,6 +1,5 @@
 package com.mx.CrudExamenClienteDir.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +29,9 @@ public class DireccionWs {
 	
 	@PostMapping("guardar")
 	public ResponseEntity<List<String>> guardar(@RequestBody Direcciones direccion){
-		ResponseEntity<List<String>> response = null;
-		List<String> lista = validar(direccion);
-
-		boolean validacion = true;
-		validacion = lista.size()>0 ? false : true;
-
-		if (validacion) {
-			impDireccion.guardar(direccion);
-			lista.add("Registro guardado exitosamente.");
-		}
+		List<String> lista = impDireccion.guardar(direccion);
 		
-		response = new ResponseEntity<List<String>>(lista,HttpStatus.OK);
-		return response;
+		return new ResponseEntity<List<String>>(lista,HttpStatus.OK);
 	}
 	
 	@PostMapping("editar")
@@ -62,14 +51,5 @@ public class DireccionWs {
 		return impDireccion.buscar(direccion);
 	}
 	
-	private List<String> validar(Direcciones direccion){
-		List<String> lMensajes = new ArrayList<>();
-		
-		int id = impDireccion.buscar(direccion) != null ? impDireccion.buscar(direccion).getId() : 0;
-		
-		if (direccion.getId() == id) {
-			lMensajes.add("El registro con identificador "+direccion.getId()+" ya existe en el sistema.");
-		}
-		return lMensajes;
-	}
+	
 }

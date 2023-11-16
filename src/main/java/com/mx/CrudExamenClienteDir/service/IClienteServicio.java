@@ -6,7 +6,7 @@ import com.mx.CrudExamenClienteDir.model.Clientes;
 
 
 public interface IClienteServicio {
-	public void guardar(Clientes cliente);
+	public List<String> guardar(Clientes cliente);
 	public void editar(Clientes cliente);
 	public void eliminar(Clientes cliente);
 	public Clientes buscar(Clientes cliente);

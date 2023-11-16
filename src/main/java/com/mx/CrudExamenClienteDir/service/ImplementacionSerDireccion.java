@@ -1,5 +1,6 @@
 package com.mx.CrudExamenClienteDir.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,13 @@ public class ImplementacionSerDireccion implements IDireccionServicio {
 	IDireccionesDao dirDao;
 
 	@Override
-	public void guardar(Direcciones direccion) {
-		dirDao.save(direccion);
+	public List<String> guardar(Direcciones direccion) {
+		List<String> lMensajes = validar(direccion);
+		if (lMensajes.size() == 0) {
+			dirDao.save(direccion);
+			lMensajes.add("Registro guardado exitosamente.");
+		}
+		return lMensajes;
 	}
 
 	@Override
@@ -39,4 +45,15 @@ public class ImplementacionSerDireccion implements IDireccionServicio {
 		return (List<Direcciones>) dirDao.findAll();
 	}
 
+	private List<String> validar(Direcciones direccion){
+		List<String> lMensajes = new ArrayList<>();
+		Direcciones dir = dirDao.findById(direccion.getId()).orElse(null);
+
+		int id = dir != null ? dir.getId() : 0;
+		
+		if (direccion.getId() == id) {
+			lMensajes.add("El registro con identificador "+direccion.getId()+" ya existe en el sistema.");
+		}
+		return lMensajes;
+	}
 }

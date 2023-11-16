@@ -1,6 +1,5 @@
 package com.mx.CrudExamenClienteDir.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mx.CrudExamenClienteDir.model.Clientes;
 import com.mx.CrudExamenClienteDir.service.ImplementacionSerCliente;
-import com.mx.CrudExamenClienteDir.service.ImplementacionSerDireccion;
 
 @RestController
 @RequestMapping("ClienteWs")
@@ -23,8 +21,6 @@ import com.mx.CrudExamenClienteDir.service.ImplementacionSerDireccion;
 public class ClienteWs {
 	@Autowired
 	ImplementacionSerCliente impCliente;
-	@Autowired
-	ImplementacionSerDireccion impDir;
 	
 	@GetMapping("listar")
 	public List<Clientes> listar(){
@@ -33,19 +29,9 @@ public class ClienteWs {
 	
 	@PostMapping("guardar")
 	public ResponseEntity<List<String>> guardar(@RequestBody Clientes cliente){
-		ResponseEntity<List<String>> response = null;
-		List<String> lista = validar(cliente);
+		List<String> lRespuesta = impCliente.guardar(cliente);
 
-		boolean validacion = true;
-		validacion = lista.size()>0 ? false : true;
-
-		if(validacion){
-			impCliente.guardar(cliente);
-			lista.add("Registro guardado exitosamente.");
-		}
-		
-		response = new ResponseEntity<List<String>>(lista,HttpStatus.OK);
-		return response;
+		return new ResponseEntity<List<String>>(lRespuesta,HttpStatus.OK);
 	}
 	
 	@PostMapping("editar")
@@ -65,23 +51,5 @@ public class ClienteWs {
 		return impCliente.buscar(cliente);
 	}
 	
-	private List<String> validar(Clientes cliente) {
-		List<String> lMensajes = new ArrayList<>();
-		
-		int id = impCliente.buscar(cliente) != null ? impCliente.buscar(cliente).getId() : 0;
-		int noCliente = impCliente.buscar(cliente) != null ? impCliente.buscar(cliente).getNum_cliente() : 0;
-		int idDir = impDir.buscar(cliente.getDireccion()) != null ? impDir.buscar(cliente.getDireccion()).getId() : 0;
-				
-		if (cliente.getId() == id) {
-			lMensajes.add("El registro con identificador "+cliente.getId()+" ya existe en el sistema.");
-		}
-		if (cliente.getNum_cliente() == noCliente) {
-			lMensajes.add("El registro con núm. de cliente "+cliente.getNum_cliente()+" ya existe en el sistema.");
-		}
-		if (idDir == 0) {
-			lMensajes.add("La dirección que intenta asignar al cliente no existe en el sistema.");
-		}
-		
-		return lMensajes;
-	}
+	
 }
